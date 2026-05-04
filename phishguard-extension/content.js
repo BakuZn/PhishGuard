@@ -3,6 +3,30 @@ console.log("PhishGuard content script loaded");
 
 let lastUrl = location.href;
 
+async function sendToBackend(subject, body) {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                subject: subject,
+                body: body
+            })
+        });
+
+        const data = await response.json();
+
+        console.log("🧠 Prediction:", data.is_phishing ? "Phishing" : "Safe");
+        console.log("📊 Confidence:", data.confidence);
+        console.log("💬 Message:", data.message);
+
+    } catch (error) {
+        console.error("❌ Backend error:", error);
+    }
+}
+
 //extract email data
 function extractEmailData() {
 
@@ -18,6 +42,7 @@ function extractEmailData() {
         console.log("📝 Body Preview:", cleanBody.substring(0, 120) + "...");
         console.log("📏 Body Length:", cleanBody.length);
 
+        sendToBackend(subject, cleanBody);
 
     } else {
         console.log("Elements not found yet, Gmail might still be loading...");

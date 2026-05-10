@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from backend.ml_model import predict_email
 
 app = FastAPI(title="PhishGuard API")
 
@@ -20,21 +21,16 @@ class EmailData(BaseModel):
 
 @app.post("/analyze")
 async def analyze_email(email: EmailData):
-    # TODO: Connect this to our Scikit-Learn ML model later!
-    
-    # For now, let's create a very basic placeholder logic
     text_to_analyze = (email.subject + " " + email.body).lower()
     
-    # Simple hardcoded rules for our baseline test
-    suspicious_words = ["urgent", "password", "bank", "account suspended", "click here"]
-    
-    is_phishing = any(word in text_to_analyze for word in suspicious_words)
+    # Run the text through Scikit-Learn
+    result = predict_email(text_to_analyze)
     
     return {
         "status": "success",
-        "is_phishing": is_phishing,
-        "confidence": 0.85 if is_phishing else 0.99, # Dummy confidence scores
-        "message": "Phishing attempt detected!" if is_phishing else "Looks safe."
+        "is_phishing": result["is_phishing"],
+        "confidence": result["confidence"],
+        "message": "Phishing attempt detected by ML!" if result["is_phishing"] else "ML says it looks safe."
     }
 
 @app.get("/")

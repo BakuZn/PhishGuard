@@ -1,3 +1,3 @@
-# Sravan
+# PhishGuard
 
-This is the Sravan AI project.
+This is the PhishGuard project.

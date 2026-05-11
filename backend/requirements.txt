@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+scikit-learn
+dnspython
+tldextract
+requests
+python-whois
+beautifulsoup4
+nltk
+pydantic
+torch
+transformers

@@ -1,12 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>PhishGuard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishGuard Elite</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      width: 380px;
+      height: 600px;
+      padding: 16px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 12px;
+    }
+    .status-card {
+      padding: 12px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--safe);
+      display: inline-block;
+      margin-right: 8px;
+    }
+    .status-dot.error {
+      background-color: var(--critical);
+      animation: pulseRed 2s infinite;
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin: 8px 0;
+    }
+    .recent-threats {
+      margin-bottom: 16px;
+    }
+    .threat-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .threat-item:last-child {
+      border-bottom: none;
+    }
+  </style>
 </head>
 <body>
-  <h2>PhishGuard</h2>
-  <button id="scanBtn">Scan Email</button>
-  <p id="result">Status: Not scanned</p>
+
+  <!-- Header -->
+  <div class="header flex-col items-center">
+    <h1 class="text-h1" style="color: var(--accent-blue);">PhishGuard <span style="color: var(--text-primary);">Elite</span></h1>
+    <span class="text-caption" style="margin-top: 4px;">AI Threat Intelligence</span>
+  </div>
+
+  <!-- Backend Status Card -->
+  <div class="glass-card status-card fade-in" style="animation-delay: 0.1s;">
+    <div class="flex-row items-center justify-between">
+      <div>
+        <span class="status-dot pulse-green" id="backend-dot"></span>
+        <span class="text-h2" id="backend-status">Checking Connection...</span>
+      </div>
+      <span class="badge badge-safe" id="model-status">BERT Online</span>
+    </div>
+  </div>
+
+  <!-- Threat Overview -->
+  <div class="overview-grid fade-in" style="animation-delay: 0.2s;">
+    <div class="glass-card stat-card">
+      <div class="text-caption">Emails Scanned</div>
+      <div class="stat-number" id="scanned-count">—</div>
+    </div>
+    <div class="glass-card stat-card">
+      <div class="text-caption">Threats Blocked</div>
+      <div class="stat-number color-critical" id="blocked-count">—</div>
+    </div>
+  </div>
+
+  <!-- Threat Intelligence / Recent Activity -->
+  <div class="glass-card fade-in" style="animation-delay: 0.3s; padding: 12px;">
+    <h2 class="text-h2" style="margin-bottom: 12px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">Recent Threat Activity</h2>
+    
+    <div id="threat-list" class="flex-col">
+      <!-- Populated dynamically by popup.js from chrome.storage.local -->
+    </div>
+  </div>
 
   <script src="popup.js"></script>
 </body>

@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "PhishGuard",
-  "version": "1.0",
-  "description": "Phishing detection extension",
+  "name": "PhishGuard Elite",
+  "version": "2.0",
+  "description": "AI Threat Intelligence & Phishing Detection Platform",
 
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
 
   "host_permissions": [
     "https://mail.google.com/*",
@@ -13,12 +13,13 @@
 
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PhishGuard"
+    "default_title": "PhishGuard Elite Dashboard"
   },
 
   "content_scripts": [
     {
       "matches": ["https://mail.google.com/*"],
+      "css": ["styles.css"],
       "js": ["content.js"]
     }
   ]

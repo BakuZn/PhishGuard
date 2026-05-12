@@ -18,6 +18,7 @@ async def analyze_nlp(text: str) -> dict:
     result = {
         "urgency_score": 0.0,
         "credential_harvest_score": 0.0,
+        "is_promotional": False,
         "risk_score": 0
     }
     
@@ -25,6 +26,11 @@ async def analyze_nlp(text: str) -> dict:
         return result
         
     text_lower = text.lower()
+    
+    # Detect if this is likely a legitimate promotional or mass-mailing email
+    promo_keywords = ["unsubscribe", "opt out", "manage preferences", "view in browser", "privacy policy"]
+    if any(kw in text_lower for kw in promo_keywords):
+        result["is_promotional"] = True
     
     urgency_hits = sum(1 for kw in URGENCY_KEYWORDS if kw in text_lower)
     cred_hits = sum(1 for kw in CREDENTIAL_KEYWORDS if kw in text_lower)

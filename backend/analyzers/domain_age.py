@@ -14,7 +14,8 @@ async def analyze_domain_age(sender_domain: str) -> dict:
         return result
         
     try:
-        w = whois.whois(sender_domain)
+        import asyncio
+        w = await asyncio.to_thread(whois.whois, sender_domain)
         creation_date = w.creation_date
         
         if isinstance(creation_date, list):

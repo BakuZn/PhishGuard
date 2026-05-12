@@ -3,10 +3,10 @@ import os
 
 print("⏳ Loading pre-trained Phishing BERT model (this may take a minute on first run)...")
 try:
-    # We use a lightweight fine-tuned BERT model for phishing/spam detection
-    model_name = "ealvaradob/bert-finetuned-phishing"
-    classifier = pipeline("text-classification", model=model_name, return_all_scores=False)
-    print("✅ BERT Model loaded successfully!")
+    # We use a completely offline lightweight fine-tuned BERT model for phishing/spam detection
+    model_name = os.path.join(os.path.dirname(__file__), "offline_bert_model")
+    classifier = pipeline("text-classification", model=model_name, return_all_scores=False, truncation=True, max_length=512)
+    print("✅ BERT Model loaded successfully from offline storage!")
 except Exception as e:
     print(f"❌ Failed to load BERT Model: {e}")
     classifier = None

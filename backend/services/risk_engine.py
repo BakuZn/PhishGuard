@@ -31,8 +31,9 @@ async def analyze_email_risk(payload: EmailPayload) -> AnalysisResult:
     
     auth_res, rep_res, url_res, age_res, html_res, homo_res, brand_res, nlp_res, attach_res = results
     
-    # Run ML Model (synchronous)
-    ml_res = ml_model.predict_email(combined_text)
+    # Run ML Model in a separate thread so it doesn't block the async event loop!
+    # Without this, multiple concurrent requests will cause the server to hang and the popup to time out.
+    ml_res = await asyncio.to_thread(ml_model.predict_email, combined_text)
     
     # Aggregate Score
     total_risk_score = 0
@@ -49,7 +50,14 @@ async def analyze_email_risk(payload: EmailPayload) -> AnalysisResult:
         total_risk_score += 40
         
     if ml_res.get("is_phishing"):
-        total_risk_score += 80 * ml_res.get("confidence", 1.0)
+        ml_score = 80 * ml_res.get("confidence", 1.0)
+        # If this looks like a standard promotional email (unsubscribe links) AND there are no
+        # major heuristic flags (total_risk_score < 40), the ML model is almost certainly throwing a false positive.
+        if nlp_res.get("is_promotional") and total_risk_score < 40:
+            ml_score = 0
+            ml_res["is_phishing"] = False  # Suppress it so it doesn't add to reasons
+        
+        total_risk_score += ml_score
         
     # Compile Reasons
     reasons = []

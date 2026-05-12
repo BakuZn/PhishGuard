@@ -1,6 +1,10 @@
-import re
-
-TRUSTED_DOMAINS = ["google.com", "microsoft.com", "linkedin.com", "joinsuperset.com", "manipal.edu"]
+TRUSTED_DOMAINS = [
+    "google.com", "microsoft.com", "linkedin.com", "joinsuperset.com", 
+    "manipal.edu", "amazon.com", "amazon.in", "amazon.co.uk", "apple.com", 
+    "paypal.com", "github.com", "netflix.com", "spotify.com", "meta.com",
+    "facebook.com", "instagram.com", "twitter.com", "x.com", "youtube.com",
+    "discord.com", "habitica.com", "thesouledstore.com"
+]
 DISPOSABLE_DOMAINS = ["mailinator.com", "10minutemail.com", "guerrillamail.com"]
 
 async def analyze_reputation(sender_email: str) -> dict:
@@ -17,7 +21,14 @@ async def analyze_reputation(sender_email: str) -> dict:
         
     domain = sender_email.split("@")[1].lower()
     
-    if domain in TRUSTED_DOMAINS:
+    # Check if domain or its base domain is in trusted list
+    is_trusted = False
+    for td in TRUSTED_DOMAINS:
+        if domain == td or domain.endswith("." + td):
+            is_trusted = True
+            break
+            
+    if is_trusted:
         result["trusted"] = True
         result["reputation_score"] = 100.0
     elif domain in DISPOSABLE_DOMAINS:

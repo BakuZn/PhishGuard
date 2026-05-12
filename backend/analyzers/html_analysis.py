@@ -15,11 +15,11 @@ async def analyze_html(html_content: str) -> dict:
         
     soup = BeautifulSoup(html_content, 'html.parser')
     
-    # Check for hidden elements
+    # Check for hidden elements (often used benignly in responsive email templates, so low risk)
     hidden_elements = soup.find_all(style=re.compile(r'display:\s*none|visibility:\s*hidden'))
     if hidden_elements:
         result["obfuscation_detected"] = True
-        result["risk_score"] += 20
+        result["risk_score"] += 5  # Reduced from 20
         
     # Check for forms (emails rarely need inline forms unless malicious)
     forms = soup.find_all('form')
@@ -30,6 +30,6 @@ async def analyze_html(html_content: str) -> dict:
     # Check for base64 encoded images/blobs
     if 'data:image' in html_content or 'base64' in html_content:
         # Some are benign, but can be used for tracking/obfuscation
-        result["risk_score"] += 10
+        result["risk_score"] += 5  # Reduced from 10
         
     return result
